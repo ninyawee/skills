@@ -154,7 +154,7 @@ Not yet started (each has full scope in spec):
 
 Drift / re-entry notes:
   - origin/develop is ~N commits ahead of stack base — rebase before PR3
-  - GEMINI_API_KEY needed in fnox develop profile
+  - GEMINI_API_KEY needed in your local secrets file
   - <other one-line gotchas>
 
 Local cleanup: dev server stopped · 2 auto-format files left unstaged (not ours)

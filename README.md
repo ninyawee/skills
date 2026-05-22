@@ -8,6 +8,7 @@ Live under [`skills/`](./skills/) — each in its own directory with a `SKILL.md
 
 | Skill | About |
 |---|---|
+| [`in-html`](./skills/in-html/) | Build one self-contained HTML artifact — either a read-only visualization of an implementation plan, or an editable HITL UI to shape structured data and copy the result back as JSON. |
 | [`recipe`](./skills/recipe/) | Turn recipe videos / URLs / descriptions into visual step-by-step recipe notes with Gemini-generated step images. |
 | [`wrap-up`](./skills/wrap-up/) | End-of-session handover — make the work durable enough that a future contributor can pick it up from PRs + issues + the repo alone. |
 

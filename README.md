@@ -23,6 +23,7 @@ Live under [`commands/`](./commands/) — drop into `~/.claude/commands/` (or a 
 | [`commit-staged`](./commands/commit-staged.md) | Commit only what's staged. |
 | [`commit-many`](./commands/commit-many.md) | Break changes into multiple logical commits by intent. |
 | [`commit-push-pr`](./commands/commit-push-pr.md) | Commit, push, and open a PR. |
+| [`eval-harness-fit`](./commands/eval-harness-fit.md) | Audit your CLAUDE.md + rules against the current harness — judge each directive keep/cut/tighten/relocate/merge for staleness, harness-redundancy, over-constraint, and misplacement. Report-only HTML viz. |
 | [`loose-ends`](./commands/loose-ends.md) | Audit the session for unfinished, unverified, or risky work. Reports a prioritized list; fixes nothing unless told to. |
 | [`merge-pr`](./commands/merge-pr.md) | Merge a GitHub PR safely with full pre-merge checks AND post-merge deploy verification. |
 | [`new-wt`](./commands/new-wt.md) | Create a new git worktree for a feature/fix, bootstrap it per the project's conventions, and open it in VS Code. |

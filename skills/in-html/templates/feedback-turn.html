@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{topic}} · feedback</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <style>
+    /*
+     * Answer shape (POSTed to /submit):
+     * {
+     *   "turnId": "<unique-id>",
+     *   "action": "submit" | "talk_more",
+     *   "answer": "...",                          // when action=submit
+     *   "feedback": "...",                        // optional extra prose; main payload when action=talk_more
+     *   "annotations": [
+     *     { "anchorId": "<dom-id>", "quote": "<selected text>", "comment": "<user note>" }
+     *   ],
+     *   "timestamp": "<iso8601>"
+     * }
+     */
+
+    main.container { max-width: 880px; padding-bottom: 6rem; }
+    hgroup p { color: var(--pico-muted-color); }
+
+    .context article { margin: 1rem 0; }
+    .context [data-annotatable] { line-height: 1.55; }
+    .context [data-annotatable]::selection { background: #fff3a8; color: #1a1a1a; }
+    mark.user-anno { background: #fff3a8; color: #1a1a1a; padding: 0 .15em; border-radius: .15em; cursor: help; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .25rem 0 1rem; }
+    .chips button { width: auto; margin: 0; padding: .35rem .9rem; font-size: .92rem; }
+
+    .actions {
+      position: sticky; bottom: 0; z-index: 10;
+      background: var(--pico-background-color);
+      padding: 1rem 0; margin-top: 1rem;
+      border-top: 1px solid var(--pico-muted-border-color);
+      display: flex; gap: .5rem; align-items: center;
+    }
+    .actions button { margin: 0; }
+    .actions button#submit { flex: 2; }
+    .actions button#toggle-talk-more { flex: 1; }
+
+    .talk-more[hidden] { display: none; }
+    .talk-more { margin-top: .5rem; }
+
+    .anno-popover {
+      position: absolute; z-index: 100;
+      background: var(--pico-card-background-color); border: 1px solid var(--pico-muted-border-color);
+      border-radius: .5rem; box-shadow: 0 4px 14px rgba(0,0,0,.25); padding: .35rem;
+    }
+    .anno-popover button { margin: 0; padding: .25rem .6rem; font-size: .85rem; width: auto; }
+
+    .anno-list { font-size: .9rem; }
+    .anno-list li { margin: .35rem 0; }
+    .anno-list code { background: #fff3a8; color: #1a1a1a; padding: 0 .25em; }
+
+    .sent { padding: 4rem 1rem; text-align: center; }
+    .sent h2 { color: #047857; margin-bottom: .5rem; }
+
+    kbd { font-size: .8em; }
+    .muted { color: var(--pico-muted-color); }
+  </style>
+</head>
+<body>
+
+<button id="theme-toggle" class="contrast" aria-label="Toggle dark mode"
+        style="position:fixed;top:.5rem;right:.5rem;z-index:200;width:auto;margin:0;padding:.2rem .5rem">🌓</button>
+<script>
+  (function () {
+    var root = document.documentElement;
+    // localStorage throws on file:// (opaque origin) — guard so the toggle still works.
+    function load() { try { return localStorage.getItem('theme'); } catch (e) { return null; } }
+    function save(v) { try { localStorage.setItem('theme', v); } catch (e) {} }
+    var saved = load();                               // 'light' | 'dark' | null = follow system
+    if (saved) root.setAttribute('data-theme', saved);
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = root.getAttribute('data-theme')
+        || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var next = cur === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      save(next);
+    });
+  })();
+</script>
+
+<main class="container" id="ui">
+
+  <hgroup>
+    <h1>{{Question title — the one thing we're deciding now}}</h1>
+    <p>{{One-line why this question matters · which decision branch it unblocks}}</p>
+  </hgroup>
+
+  <section class="context">
+    <article id="ctx-glossary" data-annotatable>
+      <header><strong>Glossary (CONTEXT.md)</strong></header>
+      <dl>
+        <dt><strong>Customer</strong></dt>
+        <dd>{{definition from CONTEXT.md, verbatim}}</dd>
+        <dt><strong>User</strong></dt>
+        <dd>{{definition, or "not defined yet"}}</dd>
+      </dl>
+    </article>
+
+    <article id="ctx-code" data-annotatable>
+      <header><strong>What the code says — {{path:line}}</strong></header>
+<pre><code>{{verbatim excerpt}}</code></pre>
+    </article>
+
+    <article id="ctx-adr" data-annotatable>
+      <header><strong>Related ADRs</strong></header>
+      <ul>
+        <li><a href="#">0003 — {{title}}</a> · {{one-line gist}}</li>
+      </ul>
+    </article>
+  </section>
+
+  <article id="answer-block">
+    <header><strong>Your answer</strong> <small class="muted">— recommended pre-filled, edit or pick a chip</small></header>
+
+    <div class="chips" id="chips">
+      <button data-pick="Customer">Customer</button>
+      <button data-pick="User">User</button>
+      <button data-pick="They're aliases — collapse">They're aliases — collapse</button>
+    </div>
+
+    <textarea id="answer" rows="3" autofocus>{{recommended answer — agent's best guess}}</textarea>
+    <small class="muted">
+      <kbd>⌘⏎</kbd> / <kbd>Ctrl⏎</kbd> submits ·
+      <em>Talk more</em> opens a discussion textarea instead of committing.
+    </small>
+
+    <div class="talk-more" hidden id="talk-more">
+      <hr/>
+      <label for="feedback">What's unclear? What should we dig into before deciding?</label>
+      <textarea id="feedback" rows="4" placeholder="Free-form. Sent as { action: 'talk_more', feedback: … }"></textarea>
+    </div>
+
+    <details id="anno-summary" hidden>
+      <summary>Your annotations <span id="anno-count">0</span></summary>
+      <ol class="anno-list" id="anno-list"></ol>
+    </details>
+  </article>
+
+  <div class="actions">
+    <button id="submit">Submit answer</button>
+    <button id="toggle-talk-more" class="secondary outline">Talk more…</button>
+  </div>
+</main>
+
+<main class="container sent" id="sent" hidden>
+  <h2>✓ Sent</h2>
+  <p>Return to chat — the agent has your answer.</p>
+  <p class="muted"><small>You can close this tab.</small></p>
+</main>
+
+<script>
+  const turnId = "{{turn-id}}";
+
+  const annotations = [];
+
+  document.querySelectorAll('.chips button[data-pick]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('answer').value = btn.dataset.pick;
+      submit('submit');
+    });
+  });
+
+  const drawer = document.getElementById('talk-more');
+  document.getElementById('toggle-talk-more').addEventListener('click', () => {
+    drawer.hidden = !drawer.hidden;
+    if (!drawer.hidden) document.getElementById('feedback').focus();
+  });
+
+  let popover = null;
+  document.querySelectorAll('[data-annotatable]').forEach(region => {
+    region.addEventListener('mouseup', (e) => {
+      const sel = window.getSelection();
+      const quote = sel?.toString().trim();
+      if (!quote) { removePopover(); return; }
+      showPopover(e, region.id, quote, sel.getRangeAt(0));
+    });
+  });
+  function showPopover(e, anchorId, quote, range) {
+    removePopover();
+    popover = document.createElement('div');
+    popover.className = 'anno-popover';
+    popover.style.left = e.pageX + 'px';
+    popover.style.top = (e.pageY + 8) + 'px';
+    const btn = document.createElement('button');
+    btn.textContent = '✎ Comment';
+    btn.addEventListener('click', () => {
+      const comment = prompt(`Comment on: "${quote.slice(0, 100)}${quote.length > 100 ? '…' : ''}"`);
+      removePopover();
+      if (!comment?.trim()) return;
+      annotations.push({ anchorId, quote, comment: comment.trim() });
+      try {
+        const mark = document.createElement('mark');
+        mark.className = 'user-anno';
+        mark.title = comment.trim();
+        range.surroundContents(mark);
+      } catch { /* selection spans nodes — annotation still recorded, just no visual */ }
+      window.getSelection()?.removeAllRanges();
+      renderAnnoList();
+    });
+    popover.appendChild(btn);
+    document.body.appendChild(popover);
+  }
+  function removePopover() { popover?.remove(); popover = null; }
+  document.addEventListener('mousedown', (e) => {
+    if (popover && !popover.contains(e.target)) removePopover();
+  });
+  function renderAnnoList() {
+    const wrap = document.getElementById('anno-summary');
+    const list = document.getElementById('anno-list');
+    document.getElementById('anno-count').textContent = String(annotations.length);
+    wrap.hidden = annotations.length === 0;
+    while (list.firstChild) list.removeChild(list.firstChild);
+    annotations.forEach(a => {
+      const li = document.createElement('li');
+      const code = document.createElement('code');
+      code.textContent = a.quote.slice(0, 80) + (a.quote.length > 80 ? '…' : '');
+      const em = document.createElement('em');
+      em.textContent = a.comment;
+      li.append(code, document.createTextNode(' — '), em);
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById('submit').addEventListener('click', () => {
+    const ans = document.getElementById('answer').value.trim();
+    const fb = document.getElementById('feedback').value.trim();
+    submit(ans ? 'submit' : (fb ? 'talk_more' : 'submit'));
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      document.getElementById('submit').click();
+    }
+  });
+
+  async function submit(action) {
+    const answer = document.getElementById('answer').value.trim();
+    const feedback = document.getElementById('feedback').value.trim();
+    const payload = {
+      turnId,
+      action,
+      ...(action === 'submit' ? { answer } : {}),
+      ...(feedback ? { feedback } : {}),
+      ...(annotations.length ? { annotations } : {}),
+      timestamp: new Date().toISOString(),
+    };
+    try {
+      const res = await fetch('/submit', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      document.getElementById('ui').hidden = true;
+      document.getElementById('sent').hidden = false;
+    } catch (err) {
+      const json = JSON.stringify(payload, null, 2);
+      try { await navigator.clipboard.writeText(json); } catch {}
+      alert(`Submit failed (${err}).\n\nThe JSON is in your clipboard — paste it in chat.`);
+    }
+  }
+</script>
+</body>
+</html>

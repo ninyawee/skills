@@ -8,6 +8,7 @@ Live under [`skills/`](./skills/) — each in its own directory with a `SKILL.md
 
 | Skill | About |
 |---|---|
+| [`bbt`](./skills/bbt/) | Black-box testing — make software easy to test, cover a bug with a failing test before fixing it, stub external seams, and generate tests with AI. |
 | [`in-html`](./skills/in-html/) | Build one self-contained HTML artifact — either a read-only visualization of an implementation plan, or an editable HITL UI to shape structured data and copy the result back as JSON. |
 | [`recipe`](./skills/recipe/) | Turn recipe videos / URLs / descriptions into visual step-by-step recipe notes with Gemini-generated step images. |
 | [`watch-video`](./skills/watch-video/) | Watch and understand local video files (the Read tool can't) by delegating to the `agy` CLI for keyframe analysis and per-second timelines. |

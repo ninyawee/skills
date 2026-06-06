@@ -1,6 +1,18 @@
 ---
 name: in-html
-description: Create a single self-contained HTML artifact in one of two modes — (1) viz: a read-only visualization of an implementation plan, design, or decision (code excerpts, mockups, diagrams, tradeoffs); (2) feedback: an interactive panel served by a local server that returns structured JSON to the agent in the same turn (plannotator-style — ask a focused question with rich context, or run a full HITL data-shaping UI with drag-drop / chips / sliders / inline annotations; user clicks Submit, server prints the answer to stdout, agent continues without the user typing). Use when the user asks for an HTML plan, an HTML visualization, an HITL data-shaping UI, a per-turn question / feedback panel, "design the ideal interface for this problem", or invokes /in-html. Output is one .html file saved to /tmp/in-html/, Pico CSS via CDN, opened in the browser.
+description: >-
+  Create a single self-contained HTML artifact in one of two modes — (1) viz: a
+  read-only visualization of an implementation plan, design, or decision (code
+  excerpts, mockups, diagrams, tradeoffs); (2) feedback: an interactive panel
+  served by a local server that returns structured JSON to the agent in the same
+  turn (plannotator-style — ask a focused question with rich context, or run a
+  full HITL data-shaping UI with drag-drop / chips / sliders / inline
+  annotations; user clicks Submit, server prints the answer to stdout, agent
+  continues without the user typing). Use when the user asks for an HTML plan, an
+  HTML visualization, an HITL data-shaping UI, a per-turn question / feedback
+  panel, "design the ideal interface for this problem", or invokes /in-html.
+  Output is one .html file saved to /tmp/in-html/, Pico CSS via CDN, opened in
+  the browser.
 ---
 
 # in-html

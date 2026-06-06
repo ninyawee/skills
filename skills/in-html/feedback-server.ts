@@ -48,13 +48,41 @@ mkdirSync(dirname(opt.answer), { recursive: true });
 
 const html = readFileSync(opt.file, "utf8");
 
+// Absolute deadline shared by the watchdog and the injected countdown widget.
+const deadlineMs = Date.now() + opt.timeoutSec * 1000;
+
+// Inject (before </body>) a self-contained countdown so EVERY Mode 2 page shows
+// time-left with no template coupling — works for templates/feedback-turn.html
+// and any hand-written artifact alike. Turns urgent under a minute, "time up" at 0.
+const countdown = `
+<div id="inhtml-countdown" aria-live="polite"
+     style="position:fixed;top:.5rem;left:.5rem;z-index:9999;font:600 .8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;padding:.3rem .55rem;border-radius:6px;background:rgba(127,127,127,.18);color:inherit"></div>
+<script>
+  (function () {
+    var el = document.getElementById('inhtml-countdown');
+    var deadline = ${deadlineMs};
+    function pad(n){ return (n < 10 ? '0' : '') + n; }
+    function tick(){
+      var ms = deadline - Date.now();
+      if (ms <= 0){ el.textContent = '⌛ time up'; el.style.background = 'rgba(200,40,40,.9)'; el.style.color = '#fff'; clearInterval(t); return; }
+      var s = Math.floor(ms / 1000);
+      el.textContent = '⏳ ' + Math.floor(s / 60) + ':' + pad(s % 60);
+      if (s <= 60){ el.style.background = 'rgba(217,84,0,.92)'; el.style.color = '#fff'; }
+    }
+    tick(); var t = setInterval(tick, 1000);
+  })();
+</script>`;
+const servedHtml = html.includes("</body>")
+  ? html.replace("</body>", countdown + "\n</body>")
+  : html + countdown;
+
 const server = Bun.serve({
   port: Number.isFinite(opt.port) ? opt.port : 0,
   async fetch(req) {
     const url = new URL(req.url);
 
     if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html")) {
-      return new Response(html, {
+      return new Response(servedHtml, {
         headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
       });
     }
@@ -84,7 +112,7 @@ const watchdog = setTimeout(() => {
   console.error(`timeout after ${opt.timeoutSec}s — no submission received`);
   server.stop();
   process.exit(1);
-}, opt.timeoutSec * 1000);
+}, Math.max(0, deadlineMs - Date.now()));
 watchdog.unref();
 
 function openBrowser(target: string) {

@@ -26,7 +26,7 @@ Pick by direction. If the artifact only flows agent → user, it's Mode 1. If an
 
 ## Quick start
 
-1. **Read-only?** Mode 1: write the `.html`, open it (the `xdg-open … || open …` snippet below covers Linux + macOS), print the path. Done.
+1. **Read-only?** Mode 1: **bootstrap from `templates/viz-scaffold.html`** — `cp` it to `/tmp/in-html/<topic>.html`, then fill the slots and delete the example blocks you don't need. Don't hand-write the `<head>`/Pico/dark-toggle/CSS — copying keeps it fast and token-light. Open it (the `xdg-open … || open …` snippet below covers Linux + macOS), print the path. Done.
 2. **Need data back?** Mode 2: write the `.html` (start from `templates/feedback-turn.html`), run `feedback-server.ts` as a **foreground** Bash call (it auto-opens a browser tab; user submits; the tab stays with a "Sent" panel for them to close), parse the JSON from stdout, continue the turn.
 
 ## Mode 1 — Plan / visualization (read-only)
@@ -77,7 +77,7 @@ Plannotator's UX. The one constraint: Claude Code's `Bash` tool caps at 10 minut
 
 ### Bundled pieces
 
-- `feedback-server.ts` — bun script. `GET /` serves the HTML; `POST /submit` writes the body to `--answer`, prints the JSON to stdout, exits 0. **Opens the browser by default** via `xdg-open` (Linux) / `open` (macOS) / `start` (Windows) — regular tab. After submit the tab stays open showing a "✓ Sent — return to chat" panel; the user closes the tab themselves. Pass `--no-open` to skip opening. Status banners go to stderr. Watchdog timeout (`--timeout`, default 540s — under the Bash 10-min cap). Random port unless `--port` is given.
+- `feedback-server.ts` — bun script. `GET /` serves the HTML; `POST /submit` writes the body to `--answer`, prints the JSON to stdout, exits 0. **Opens the browser by default** via `xdg-open` (Linux) / `open` (macOS) / `start` (Windows) — regular tab. After submit the tab stays open showing a "✓ Sent — return to chat" panel; the user closes the tab themselves. Pass `--no-open` to skip opening. Status banners go to stderr. Watchdog timeout (`--timeout`, default 540s — under the Bash 10-min cap). Random port unless `--port` is given. The server **injects a self-contained countdown widget** (fixed top-left) into whatever HTML it serves, so every Mode 2 page shows time-left tied to `--timeout` — turns urgent under 60s, "time up" at 0. No template work needed; it works for `feedback-turn.html` and hand-written artifacts alike.
 - `templates/feedback-turn.html` — boilerplate for question-shaped UIs (chips, recommended-answer textarea, talk-more drawer, inline annotations). For richer data-shaping, copy this template's submit/stdout pattern but design your own controls from scratch.
 
 ### Design the JSON shape first
@@ -178,7 +178,10 @@ Default to `/tmp/in-html/<topic>.html` — these are one-off artifacts. Kebab-ca
 
 ## Boilerplate header
 
-Every artifact starts with this `<head>`:
+`templates/viz-scaffold.html` already bakes this in (plus the dark-mode toggle
+and the common viz CSS: `.badge`/`.grid2`/`.add`/`.del`/`.callout`/`.num`/…) —
+bootstrap from it instead of typing the head out. For reference, every artifact
+starts with this `<head>`:
 
 ```html
 <!doctype html>

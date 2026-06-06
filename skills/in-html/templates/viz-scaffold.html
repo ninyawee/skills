@@ -1,0 +1,126 @@
+<!doctype html>
+<!--
+  in-html VIZ scaffold (Mode 1, read-only). Bootstrap a viz fast + token-light:
+    cp ~/.claude/skills/in-html/templates/viz-scaffold.html /tmp/in-html/<topic>.html
+  Then EDIT the slots below and DELETE the example blocks you don't need. The
+  <head>, Pico, dark-mode toggle and the .class CSS are the reusable defaults —
+  don't re-type them. Keep the artifact one self-contained file.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{TITLE}}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <style>
+    main.container { max-width: 960px; padding-bottom: 4rem; }
+    hgroup p { color: var(--pico-muted-color); }
+    article { margin: .9rem 0; }
+    article > header { display:flex; align-items:baseline; gap:.5rem; flex-wrap:wrap; }
+    article > header .file { font-family: var(--pico-font-family-monospace); font-size:.8rem; color: var(--pico-muted-color); }
+    article > header .conf { margin-left:auto; font-variant-numeric:tabular-nums; font-size:.72rem; color:var(--pico-muted-color); }
+    .why { margin:.3rem 0 .6rem; font-size:.92rem; }
+    .why .q { color:var(--pico-muted-color); font-style:italic; }
+    .muted { color: var(--pico-muted-color); }
+    .num { font-variant-numeric: tabular-nums; }
+    /* badges / pills — variant via a 2nd class */
+    .badge, .pill { font-size:.68rem; font-weight:700; padding:.12rem .5rem; border-radius:5px; letter-spacing:.03em; text-transform:uppercase; white-space:nowrap; }
+    .pill { text-transform:none; font-weight:600; border:1px solid var(--pico-muted-border-color); }
+    .b-good { background:#2f9e44; color:#fff; }
+    .b-warn { background:#d35400; color:#fff; }
+    .b-info { background:#5c7cfa; color:#fff; }
+    .b-bad  { background:#a33; color:#fff; }
+    .rec { font-size:.62rem; opacity:.75; margin-left:.3rem; }
+    /* two-column side-by-side; stacks on narrow */
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; }
+    @media (max-width:720px) { .grid2 { grid-template-columns:1fr; } }
+    /* code / diff */
+    pre { font-size:.78rem; background:var(--pico-code-background-color); padding:.55rem .65rem; border-radius:6px; white-space:pre-wrap; margin:.4rem 0; }
+    .add { color:#2b8a3e; } .del { color:#c92a2a; } .cmt { color:var(--pico-muted-color); }
+    /* callout box */
+    .callout { border-left:4px solid var(--pico-primary); padding:.5rem .8rem; margin:.8rem 0; background:var(--pico-card-sectioning-background-color); border-radius:4px; }
+    .callout.warn { border-left-color:#d35400; }
+    details summary { cursor:pointer; font-size:.85rem; color:var(--pico-muted-color); }
+    table { font-size:.9rem; } table td, table th { padding:.4rem .6rem; }
+  </style>
+</head>
+<body>
+
+<!-- Dark-mode toggle — defaults to OS preference; persists when not on file://. -->
+<button id="theme-toggle" class="contrast" aria-label="Toggle dark mode"
+        style="position:fixed;top:.5rem;right:.5rem;width:auto;margin:0;padding:.2rem .5rem">🌓</button>
+<script>
+  (function () {
+    var root = document.documentElement;
+    function load() { try { return localStorage.getItem('theme'); } catch (e) { return null; } }
+    function save(v) { try { localStorage.setItem('theme', v); } catch (e) {} }
+    var saved = load(); if (saved) root.setAttribute('data-theme', saved);
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var cur = root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var next = cur === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next); save(next);
+    });
+  })();
+</script>
+
+<main class="container">
+
+  <hgroup>
+    <h1>{{TITLE}}</h1>
+    <p>{{One-line subtitle — what this shows / the decision it informs}}</p>
+  </hgroup>
+
+  <!-- KEY TAKEAWAY (optional) — delete if not needed -->
+  <div class="callout">
+    <strong>{{Bottom line}}</strong> — {{the single most important thing}}.
+  </div>
+
+  <!-- CARD pattern: badge + file ref + rationale + code/diff -->
+  <article>
+    <header>
+      <span class="badge b-info">{{label}}</span>
+      <strong>{{Point title}}</strong>
+      <span class="file">{{path:line}}</span>
+      <span class="conf">{{conf 0.0}}</span>
+    </header>
+    <p class="why">{{Why this matters / what the code says.}}</p>
+<pre>{{verbatim excerpt, or a diff:}}
+<span class="del">- old line</span>
+<span class="add">+ new line</span></pre>
+  </article>
+
+  <!-- SIDE-BY-SIDE pattern -->
+  <div class="grid2">
+    <article><header><strong>{{Option A}}</strong></header>{{…}}</article>
+    <article><header><strong>{{Option B}}</strong></header>{{…}}</article>
+  </div>
+
+  <!-- COMPARISON TABLE pattern -->
+  <figure>
+  <table>
+    <thead><tr><th>{{Dimension}}</th><th>A</th><th>B</th></tr></thead>
+    <tbody>
+      <tr><td>{{row}}</td><td class="num">{{…}}</td><td class="num">{{…}} <span class="rec">rec</span></td></tr>
+    </tbody>
+  </table>
+  </figure>
+
+  <!-- LONG / SECONDARY detail — collapse it -->
+  <details>
+    <summary>{{Show more — full breakdown}}</summary>
+    {{…}}
+  </details>
+
+  <!--
+    DIAGRAM (optional): only when it earns its keep; pin a known integrity hash.
+    Uncomment and write real mermaid (edges use the arrow syntax). NOTE: a literal
+    arrow can't live inside an HTML comment (it would close it early), so this
+    example omits the edges — add them when you uncomment:
+      <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+      <pre class="mermaid">flowchart LR; A; B</pre>
+      <script>mermaid.initialize({startOnLoad:true, theme:'neutral'});</script>
+  -->
+
+</main>
+</body>
+</html>

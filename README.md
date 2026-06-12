@@ -11,6 +11,7 @@ Live under [`skills/`](./skills/) — each in its own directory with a `SKILL.md
 | [`bbt`](./skills/bbt/) | Black-box testing — make software easy to test, cover a bug with a failing test before fixing it, stub external seams, and generate tests with AI. |
 | [`in-html`](./skills/in-html/) | Build one self-contained HTML artifact — either a read-only visualization of an implementation plan, or an editable HITL UI to shape structured data and copy the result back as JSON. |
 | [`in-html-gh`](./skills/in-html-gh/) | Build an HTML viz (via `in-html`) and publish it to a GitHub issue/PR — inline `x-html` fence + a full-HTML R2 link + a collapsed `<details>` markdown fallback; generated HTML carries a dark-mode toggle. |
+| [`host-file`](./skills/host-file/) | Upload a local file to Cloudflare R2 (bucket `tmp`) and print a public URL — for attaching screenshots/videos/logs to GitHub issues/PRs or sharing in chat. Secret blocklist, 200MB cap, `--ephemeral` (30-day) tier. |
 | [`recipe`](./skills/recipe/) | Turn recipe videos / URLs / descriptions into visual step-by-step recipe notes with Gemini-generated step images. |
 | [`watch-video`](./skills/watch-video/) | Watch and understand local video files (the Read tool can't) by delegating to the `agy` CLI for keyframe analysis and per-second timelines. |
 | [`wrap-up`](./skills/wrap-up/) | End-of-session handover — make the work durable enough that a future contributor can pick it up from PRs + issues + the repo alone. |

@@ -1,5 +1,7 @@
 ---
+name: new-wt
 description: Create a new git worktree for a feature/fix, bootstrap it per the project's conventions, and open it in VS Code
+disable-model-invocation: true
 argument-hint: <what to do> [base-branch — default develop]
 version: 1.0.0
 ---

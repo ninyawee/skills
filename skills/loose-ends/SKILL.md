@@ -1,5 +1,7 @@
 ---
+name: loose-ends
 description: Audit this session for loose ends — uncommitted work, unverified deploys, manual steps left to the user, leftover test artifacts, secrets, foot-guns, doc drift. Reports a prioritized list; fixes nothing unless told to.
+disable-model-invocation: true
 ---
 
 Review what was done in **this session** and surface what's unfinished, unverified, or risky. Output one prioritized list — per item, a line of *what* and a line of the concrete *check* or *do* (a command, a query, a UI step). **Don't fix anything** unless the user follows up ("do N" / "fix N"). `$ARGUMENTS` — optional area to scope to; default: everything touched.

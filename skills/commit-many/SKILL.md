@@ -1,6 +1,8 @@
 ---
+name: commit-many
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git add:*), Bash(git commit:*), Bash(git reset:*)
 description: Break changes into multiple logical commits by intent
+disable-model-invocation: true
 ---
 
 ## Context

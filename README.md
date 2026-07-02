@@ -2,9 +2,18 @@
 
 My personal Claude Code skills and slash commands.
 
+Everything lives under [`skills/`](./skills/) — each in its own directory with a
+`SKILL.md`. Install into `~/.claude/skills/` (or a project's `.claude/skills/`),
+or add straight from GitHub with [`skills`](https://skills.sh/):
+
+```sh
+skills add ninyawee/skills --skill '*'
+```
+
 ## Skills
 
-Live under [`skills/`](./skills/) — each in its own directory with a `SKILL.md`.
+Auto-invokable skills — Claude reaches for these on its own when the task fits,
+and you can also call them by name.
 
 | Skill | About |
 |---|---|
@@ -13,26 +22,28 @@ Live under [`skills/`](./skills/) — each in its own directory with a `SKILL.md
 | [`in-html-gh`](./skills/in-html-gh/) | Build an HTML viz (via `in-html`) and publish it to a GitHub issue/PR — inline `x-html` fence + a full-HTML R2 link + a collapsed `<details>` markdown fallback; generated HTML carries a dark-mode toggle. |
 | [`host-file`](./skills/host-file/) | Upload a local file to Cloudflare R2 (bucket `tmp`) and print a public URL — for attaching screenshots/videos/logs to GitHub issues/PRs or sharing in chat. Secret blocklist, 200MB cap, `--ephemeral` (30-day) tier. |
 | [`recipe`](./skills/recipe/) | Turn recipe videos / URLs / descriptions into visual step-by-step recipe notes with Gemini-generated step images. |
+| [`scrutinize`](./skills/scrutinize/) | Outsider-perspective end-to-end review of a plan, PR, or code change — questions intent first, then traces the real code path to verify the change does what it claims. |
 | [`watch-video`](./skills/watch-video/) | Watch and understand local video files (the Read tool can't) by delegating to the `agy` CLI for keyframe analysis and per-second timelines. |
 | [`wrap-up`](./skills/wrap-up/) | End-of-session handover — make the work durable enough that a future contributor can pick it up from PRs + issues + the repo alone. |
 
-## Commands
+## Slash-command skills
 
-Live under [`commands/`](./commands/) — drop into `~/.claude/commands/` (or a project's `.claude/commands/`) to use as slash commands.
+User-invoked only (`disable-model-invocation: true`) — these behave like the old
+slash commands: they run when you type `/<name>`, and Claude never triggers them
+on its own. (Converted from the former `commands/`.)
 
-| Command | About |
+| Skill | About |
 |---|---|
-| [`commit`](./commands/commit.md) | Create a git commit. |
-| [`commit-staged`](./commands/commit-staged.md) | Commit only what's staged. |
-| [`commit-many`](./commands/commit-many.md) | Break changes into multiple logical commits by intent. |
-| [`commit-push-pr`](./commands/commit-push-pr.md) | Commit, push, and open a PR. |
-| [`eval-harness-fit`](./commands/eval-harness-fit.md) | Audit your CLAUDE.md + rules against the current harness — judge each directive keep/cut/tighten/relocate/merge for staleness, harness-redundancy, over-constraint, and misplacement. Report-only HTML viz. |
-| [`in-html-gh`](./commands/in-html-gh.md) | Build an HTML viz and publish it inline to a GitHub issue/PR via the gh-x-html `x-html` fence (comment / body-append / body-replace). |
-| [`init-claude-review-ci`](./commands/init-claude-review-ci.md) | Scaffold (or repair) the Claude Code Review GitHub Action in any repo — the validated sticky, single-updating-comment config (tag mode + `track_progress`/`use_sticky_comment` + Claude GitHub App). |
-| [`loose-ends`](./commands/loose-ends.md) | Audit the session for unfinished, unverified, or risky work. Reports a prioritized list; fixes nothing unless told to. |
-| [`merge-pr`](./commands/merge-pr.md) | Merge a GitHub PR safely with full pre-merge checks AND post-merge deploy verification. |
-| [`new-wt`](./commands/new-wt.md) | Create a new git worktree for a feature/fix, bootstrap it per the project's conventions, and open it in VS Code. |
-| [`setup-wt-bootstrap`](./commands/setup-wt-bootstrap.md) | Set up a repo so `git worktree add` auto-bootstraps the new worktree (mise `wt:bootstrap` task + a shared `post-checkout` git hook). |
+| [`commit`](./skills/commit/) | Create a git commit. |
+| [`commit-staged`](./skills/commit-staged/) | Commit only staged changes (does not stage anything). |
+| [`commit-many`](./skills/commit-many/) | Break changes into multiple logical commits by intent. |
+| [`commit-push-pr`](./skills/commit-push-pr/) | Commit, push, and open a PR. |
+| [`eval-harness-fit`](./skills/eval-harness-fit/) | Audit your CLAUDE.md + rules against the current harness — judge each directive keep/cut/tighten/relocate/merge for staleness, harness-redundancy, over-constraint, and misplacement. Report-only HTML viz. |
+| [`init-claude-review-ci`](./skills/init-claude-review-ci/) | Set up (or repair) the Claude Code Review GitHub Action in the current repo — the validated sticky, single-updating-comment config. |
+| [`loose-ends`](./skills/loose-ends/) | Audit the session for unfinished, unverified, or risky work. Reports a prioritized list; fixes nothing unless told to. |
+| [`merge-pr`](./skills/merge-pr/) | Merge a GitHub PR safely with full pre-merge checks AND post-merge deploy verification. |
+| [`new-wt`](./skills/new-wt/) | Create a new git worktree for a feature/fix, bootstrap it per the project's conventions, and open it in VS Code. |
+| [`setup-wt-bootstrap`](./skills/setup-wt-bootstrap/) | Set up a repo so `git worktree add` auto-bootstraps the new worktree (mise `wt:bootstrap` task + a shared `post-checkout` git hook). |
 
 ## License
 

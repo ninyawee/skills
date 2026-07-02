@@ -1,5 +1,7 @@
 ---
+name: init-claude-review-ci
 description: Set up (or repair) the Claude Code Review GitHub Action in the current repo using the validated sticky, single-updating-comment config. Use whenever the user wants to "init CI for Claude", add an automated Claude PR reviewer, set up claude-code-action review, or fix a claude-review workflow that runs green but posts no review.
+disable-model-invocation: true
 argument-hint: "[target branches, e.g. main  or  develop,main]"
 allowed-tools: Bash(gh *), Bash(git *), Bash(ls *), Bash(cat *), Bash(test *), Bash(base64 *), Read, Write, Edit, AskUserQuestion
 ---

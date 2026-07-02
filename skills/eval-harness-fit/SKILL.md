@@ -1,5 +1,7 @@
 ---
+name: eval-harness-fit
 description: Audit your CLAUDE.md + rules against the CURRENT harness — judge each directive keep/cut/tighten/relocate/merge for staleness, harness-redundancy, over-constraint, and misplacement. Report-only HTML viz; never writes to the audited files.
+disable-model-invocation: true
 ---
 
 # /eval-harness-fit

@@ -1,5 +1,7 @@
 ---
+name: setup-wt-bootstrap
 description: Set up a repo so `git worktree add` auto-bootstraps the new worktree (mise `wt:bootstrap` task + a shared `post-checkout` git hook)
+disable-model-invocation: true
 argument-hint: "[overrides — e.g. 'secrets file is .env.local', 'pkg manager pnpm']"
 version: 1.0.0
 ---

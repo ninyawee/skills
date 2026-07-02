@@ -17,9 +17,8 @@ description: >-
   gh-x-html extension), a full-HTML click-through link hosted on R2 (host-file)
   for everyone else, and a collapsed `<details>` markdown fallback — and the
   generated HTML carries a dark-mode toggle that defaults to the system
-  preference. For deterministic invocation (typing `/in-html-gh <args>`), use
-  the slash command of the same name at `~/.claude/commands/in-html-gh.md` — it
-  routes through this skill.
+  preference. Invoke it deterministically by typing `/in-html-gh <args>` — this
+  skill is directly slash-invocable, so there is no separate command wrapper.
 ---
 
 # in-html-gh

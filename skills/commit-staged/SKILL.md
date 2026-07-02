@@ -1,6 +1,8 @@
 ---
+name: commit-staged
 allowed-tools: Bash(git status:*), Bash(git diff:*), Bash(git log:*), Bash(git commit:*)
 description: Commit only staged changes (does not stage anything)
+disable-model-invocation: true
 ---
 
 ## Context

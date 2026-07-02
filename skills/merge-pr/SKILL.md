@@ -1,6 +1,6 @@
 ---
 name: merge-pr
-description: Merge a GitHub PR safely with full pre-merge checks AND post-merge deploy verification. Use when the user says "merge PR", "merge this PR", "merge to main", "ship this", or invokes /merge-pr. Critical: a green PR check does NOT mean the post-merge deploy succeeds — different workflows can run different build paths. This skill enforces watching the post-merge Deploy run and hotfixing immediately if it fails, instead of leaving main broken.
+description: 'Merge a GitHub PR safely with full pre-merge checks AND post-merge deploy verification. Use when the user says "merge PR", "merge this PR", "merge to main", "ship this", or invokes /merge-pr. Critical: a green PR check does NOT mean the post-merge deploy succeeds — different workflows can run different build paths. This skill enforces watching the post-merge Deploy run and hotfixing immediately if it fails, instead of leaving main broken.'
 disable-model-invocation: true
 ---
 

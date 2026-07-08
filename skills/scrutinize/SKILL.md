@@ -1,6 +1,6 @@
 ---
 name: scrutinize
-description: Outsider-perspective end-to-end review of a plan, PR, or code change. First questions intent and whether a simpler/more elegant approach would achieve the same goal, then traces the actual code path (not just the diff) to verify the change does what it claims. Output is concise, actionable, and every call carries its rationale. Trigger on /scrutinize and proactively whenever the user asks to review, audit, sanity-check, or get a second opinion on a plan, PR, diff, design doc, or proposed code change.
+description: Outsider-perspective end-to-end review of a plan, PR, or code change. First questions intent and whether a simpler/more elegant approach would achieve the same goal, then traces the actual code path (not just the diff) to verify the change does what it claims. Output is concise, actionable, and every call carries its rationale. When the artifact is a GitHub PR, also records the outcome on the PR as labels (local-scrutinized + a verdict tag; verdict:ship once findings clear). Trigger on /scrutinize and proactively whenever the user asks to review, audit, sanity-check, or get a second opinion on a plan, PR, diff, design doc, or proposed code change.
 ---
 
 # Scrutinize
@@ -54,6 +54,45 @@ Output one tight section per finding. Order by severity (blocker → major → n
 - **Suggested change** — concrete, minimal.
 
 Close with a one-line verdict: ship / fix-then-ship / rework / reject — with the single biggest reason.
+
+## PR mode — record the verdict as labels
+
+When the artifact under review **is a GitHub PR** (the user pointed `/scrutinize` at a PR number/URL, or you're on a branch with an open PR), record the outcome on the PR after the report so the verdict is visible without reading the comment. Skip this entirely for plans, design docs, or local-only diffs.
+
+Resolve the PR number first: `gh pr view --json number -q .number` for the current branch, or take the number/URL the user gave. Then:
+
+1. **Ensure the label scheme exists** (idempotent — `--force` creates or updates, safe to run every time):
+
+   ```bash
+   gh label create local-scrutinized      --color 5319e7 --description "Reviewed locally via /scrutinize" --force
+   gh label create "verdict:ship"          --color 0e8a16 --description "Local scrutiny: cleared to merge (clean, or findings fixed)" --force
+   gh label create "verdict:fix-then-ship" --color fbca04 --description "Local scrutiny: minor fixes needed before merge" --force
+   gh label create "verdict:rework"        --color d93f0b --description "Local scrutiny: needs rework before re-review" --force
+   gh label create "verdict:reject"        --color b60205 --description "Local scrutiny: do not merge this approach as-is" --force
+   ```
+
+2. **Mark it scrutinized and clear any stale verdict state** (a re-run must not leave a previous verdict behind):
+
+   ```bash
+   gh pr edit <N> --add-label local-scrutinized
+   gh pr edit <N> --remove-label "verdict:ship" --remove-label "verdict:fix-then-ship" \
+                  --remove-label "verdict:rework" --remove-label "verdict:reject" 2>/dev/null || true
+   ```
+
+3. **Apply the current verdict tag** — exactly one:
+
+   | Verdict | Label to add |
+   |---|---|
+   | ship | `verdict:ship` |
+   | fix-then-ship | `verdict:fix-then-ship` |
+   | rework | `verdict:rework` |
+   | reject | `verdict:reject` |
+
+   `gh pr edit <N> --add-label <label-from-table>`
+
+`local-scrutinized` is sticky — it stays once set, marking "a human-driven scrutiny happened here." The verdict tag is the *current* state and is replaced on every re-run. So the intended loop is: first pass lands `local-scrutinized` + e.g. `verdict:fix-then-ship`; the author fixes the findings; a re-scrutiny confirms them resolved and flips the tag to `verdict:ship` (the green "merge it" flag). A clean PR on the first pass goes straight to `verdict:ship`.
+
+This replaces the old CI auto-review (the GitHub Action posted a comment on every push) with a deliberate, human-triggered review whose outcome is a glanceable label rather than comment noise.
 
 ## Operating rules
 

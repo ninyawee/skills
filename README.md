@@ -20,6 +20,7 @@ and you can also call them by name.
 | [`bbt`](./skills/bbt/) | Black-box testing — make software easy to test, cover a bug with a failing test before fixing it, stub external seams, and generate tests with AI. |
 | [`in-html`](./skills/in-html/) | Build one self-contained HTML artifact — either a read-only visualization of an implementation plan, or an editable HITL UI to shape structured data and copy the result back as JSON. |
 | [`in-html-gh`](./skills/in-html-gh/) | Build an HTML viz (via `in-html`) and publish it to a GitHub issue/PR — inline `x-html` fence + a full-HTML R2 link + a collapsed `<details>` markdown fallback; generated HTML carries a dark-mode toggle. |
+| [`demo-video`](./skills/demo-video/) | Produce a narrated, dead-frame-free demo video of a UI flow — record in beats with `playwright-cli`, cut dead frames with ffmpeg, TTS narration + burned subtitles (Thai-safe), embed as GIF + MP4 in a PR. |
 | [`host-file`](./skills/host-file/) | Upload a local file to Cloudflare R2 (bucket `tmp`) and print a public URL — for attaching screenshots/videos/logs to GitHub issues/PRs or sharing in chat. Secret blocklist, 200MB cap, `--ephemeral` (30-day) tier. |
 | [`recipe`](./skills/recipe/) | Turn recipe videos / URLs / descriptions into visual step-by-step recipe notes with Gemini-generated step images. |
 | [`scrutinize`](./skills/scrutinize/) | Outsider-perspective end-to-end review of a plan, PR, or code change — questions intent first, then traces the real code path to verify the change does what it claims. |

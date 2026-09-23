@@ -7,6 +7,12 @@ description: Produce a narrated, dead-frame-free demo video of a UI flow for a P
 
 Turn a UI flow into a short narrated video a human actually watches: record in **beats**, cut the dead frames, narrate each beat, burn subtitles, embed in the PR. A beat is one story step a viewer must see (search finds the duplicates → drawer shows the evidence → merge collapses them); everything between beats is dead frames waiting to be cut.
 
+## Prerequisites
+
+- **[`video-use`](https://github.com/browser-use/video-use)** skill (browser-use) — the editing machinery this skill leans on (EDL format, multi-take selection, grades, animation overlays). Install per its README: clone, `ln -sfn <clone> ~/.claude/skills/video-use`, `uv sync`.
+- `ffmpeg`, [`playwright-cli`](https://github.com/microsoft/playwright-cli), and [`host-file`](../host-file/) for uploading.
+- A TTS key: `PAXALABS_API_KEY` (Thai) or `ELEVENLABS_API_KEY` (other languages; `video-use` already asks for this one).
+
 ## 1 — Record
 
 - Storyboard the beats first, and seed **real-shaped data** that tells the story — a real duplicate cluster beats a synthetic `[e2e] fixture A` every time.
@@ -36,4 +42,4 @@ Turn a UI flow into a short narrated video a human actually watches: record in *
 - Upload (`host-file`). On **GitHub**, an R2-hosted `<video src>` is stripped by CSP (the reviewer sees an empty box), so embed a subtitled **GIF inline** (`![](…gif)`, camo-proxied, ≈8–12 fps, ~720px wide, ≤10 MB) plus a plain link to the narrated MP4. Add a one-line description of what it shows; keep the raw capture as a secondary link.
 - Done when: the PR body shows the GIF and links the narrated MP4.
 
-Deep machinery (EDL format, multi-take selection, grades, animation overlays): the `video-use` skill.
+Deep machinery (EDL format, multi-take selection, grades, animation overlays): the [`video-use`](https://github.com/browser-use/video-use) skill.
